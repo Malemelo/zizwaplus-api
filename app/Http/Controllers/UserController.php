@@ -199,7 +199,7 @@ class UserController extends Controller
         }
     }
 
-    public function emailLoginData(Request $request)
+    public function emailLoginDataSample(Request $request)
     {
         $request->validate([
             'email' => ['required'],
@@ -259,5 +259,72 @@ class UserController extends Controller
             $status_code = 400;
             return response($response, $status_code);
         }
+    }
+
+    public function emailLoginData(Request $request)
+    {
+        $request->validate([
+            'email' => ['required'],
+            'password' => ['required']
+        ]);
+
+        session()->pull('LoggedUser');
+
+        $registered_user = User::where('email', $request->email)->whereNotNull('email')->exists();
+        if($registered_user == true) {
+            $User = User::where('email', $request->email)->first();
+            $Email = User::where('email', $request->email)->first();
+            $subscription_plan = "null";
+            if (Hash::check($request->password, $User->password)) {
+                $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
+                $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
+                if ($activated_user) {
+                    $user = DB::table('users')->where('email', $request->email)->first();
+                    $request->session()->put('LoggedUser', $user->id);
+                    $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
+
+                    $response = [
+                        'success' => true,
+                        'message' => 'Welcome back',
+                        'user_id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'phoneNumber' => $user->phoneNumber,
+                        'country' => $user->country,
+                        'profilePic' => $user->profile_pic,
+                        'subscription_end' => $subscription_plan,
+                        'token' => $tokenResult
+                    ];
+                    $status_code = 200;
+                    return response($response, $status_code);
+
+                } elseif ($registered_but_suspended_user) {
+                    $response = [
+                        'success' => false,
+                        'message' => 'Sorry, your account is currently suspended. Please call us for assistance'
+                    ];
+                    $status_code = 400;
+                    return response($response, $status_code);
+                }
+            } else {
+                $response = [
+                    'success' => false,
+                    'message' => 'Ooops wrong credentials entered'
+                ];
+                $status_code = 400;
+                return response($response, $status_code);
+            }
+        }else{
+            $response = [
+                'success' => false,
+                'message' => 'No related account, please register'
+            ];
+            $status_code = 400;
+            return response($response, $status_code);
+        }
+
+
+
+
     }
 }
