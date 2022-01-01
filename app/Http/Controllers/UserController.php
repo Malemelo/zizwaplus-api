@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -272,26 +273,25 @@ class UserController extends Controller
         if($registered_user == true) {
             $user = User::where('email', $request->email)->first();
             $subscription_plan = "null";
-            if (Hash::check($request->password, $user->password)) {
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
-                    $user = DB::table('users')->where('email', $request->email)->first();
-                   // $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
-
+                    $auth = Auth::user();
+                    $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
                     $response = [
                         'success' => true,
                         'message' => 'Welcome back',
                         'user_id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
-                        //'phoneNumber' => $user->phoneNumber,
+                        'phoneNumber' => $user->phoneNumber,
                         'profilePic' => $user->profile_pic,
                         'subscription_end' => $subscription_plan,
-                       // 'token' => $tokenResult
+                        'token' => $token
                     ];
                     $status_code = 200;
-                    return response($response, $status_code);
+                    return response()->json($response, $status_code);
 
                 } elseif ($registered_but_suspended_user) {
                     $response = [
@@ -299,7 +299,7 @@ class UserController extends Controller
                         'message' => 'Sorry, your account is currently suspended. Please call us for assistance'
                     ];
                     $status_code = 400;
-                    return response($response, $status_code);
+                    return response()->json($response, $status_code);
                 }
             } else {
                 $response = [
@@ -307,7 +307,7 @@ class UserController extends Controller
                     'message' => 'Ooops wrong credentials entered'
                 ];
                 $status_code = 400;
-                return response($response, $status_code);
+                return response()->json($response, $status_code);
             }
         }else{
             $response = [
@@ -315,7 +315,7 @@ class UserController extends Controller
                 'message' => 'No related account, please register'
             ];
             $status_code = 400;
-            return response($response, $status_code);
+            return response()->json($response, $status_code);
         }
 
 
