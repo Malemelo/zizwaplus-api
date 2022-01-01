@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payments;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
@@ -144,10 +150,10 @@ class UserController extends Controller
             $UserPassword = User::where('phoneNumber', $logging_phoneNumber)->first()->password;
             if (Hash::check($request->password, $UserPassword)) {
                 $registered_but_suspended_user = User::where('phoneNumber', $logging_phoneNumber)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
+                $user = DB::table('users')->where('phoneNumber', $logging_phoneNumber)->first();
                 $activated_user = User::where('phoneNumber', $logging_phoneNumber)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 $fetched_subscription = Payments::where('user_id', $user->id)->whereNotNull('plan_name')->exists();
                 if ($activated_user) {
-                    $user = DB::table('users')->where('phoneNumber', $logging_phoneNumber)->first();
                     if ($fetched_subscription == true) {
                         $subscription_end = Payments::where('user_id', $user->id)->orderBy('updated_at','DESC')->first();
                     }
@@ -166,7 +172,7 @@ class UserController extends Controller
                     ];
                     $status_code = 201;
                     return response($response, $status_code);
-        
+
                 } elseif ($registered_but_suspended_user) {
                     $response = [
                         "success" => "false",
@@ -214,7 +220,7 @@ class UserController extends Controller
                         $subscription_end = Payments::where('user_id', $user->id)->orderBy('updated_at','DESC');
                     }
                     $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
-                
+
                     $response = [
                         'success' => true,
                         'message' => 'Welcome back',
