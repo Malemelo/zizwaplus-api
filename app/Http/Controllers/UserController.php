@@ -268,8 +268,6 @@ class UserController extends Controller
             'password' => ['required']
         ]);
 
-        session()->pull('LoggedUser');
-
         $registered_user = User::where('email', $request->email)->whereNotNull('email')->exists();
         if($registered_user == true) {
             $User = User::where('email', $request->email)->first();
@@ -280,7 +278,6 @@ class UserController extends Controller
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
                     $user = DB::table('users')->where('email', $request->email)->first();
-                    $request->session()->put('LoggedUser', $user->id);
                     $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
 
                     $response = [
@@ -290,7 +287,6 @@ class UserController extends Controller
                         'name' => $user->name,
                         'email' => $user->email,
                         'phoneNumber' => $user->phoneNumber,
-                        'country' => $user->country,
                         'profilePic' => $user->profile_pic,
                         'subscription_end' => $subscription_plan,
                         'token' => $tokenResult

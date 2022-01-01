@@ -20,8 +20,23 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phoneNumber',
+        'email_verified_at',
         'password',
+        'country',
+        'profile_pic',
+        'isActive',
+        'accountDeleted',
+        'isSuspended',
+        'optFourDigitCode',
+        'stripe_customer_id',
+        'stripe_id'
     ];
+
+    public function payments()
+    {
+        return $this->hasOne(Payments::class, 'user_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
