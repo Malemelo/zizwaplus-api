@@ -209,7 +209,6 @@ class UserController extends Controller
         $registered_user = User::where('email', $request->email)->whereNotNull('email')->exists();
         if($registered_user == true) {
             $user = User::where('email', $request->email)->first();
-            $Email = User::where('email', $request->email)->first();
             $subscription_end = "null";
             if (Hash::check($request->password, $user->password)) {
                 $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
@@ -217,7 +216,7 @@ class UserController extends Controller
                 $fetched_subscription = Payments::where('user_id', $user->id)->whereNotNull('plan_name')->exists();
                 if ($activated_user) {
                     if ($fetched_subscription == true) {
-                        $subscription_end = Payments::where('user_id', $user->id)->orderBy('updated_at','DESC');
+                        $subscription_end = Payments::where('user_id', $user->id)->orderBy('updated_at','DESC')->first();
                     }
                     $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
 
