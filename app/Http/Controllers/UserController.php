@@ -270,15 +270,14 @@ class UserController extends Controller
 
         $registered_user = User::where('email', $request->email)->whereNotNull('email')->exists();
         if($registered_user == true) {
-            $User = User::where('email', $request->email)->first();
-            $Email = User::where('email', $request->email)->first();
+            $user = User::where('email', $request->email)->first();
             $subscription_plan = "null";
-            if (Hash::check($request->password, $User->password)) {
+            if (Hash::check($request->password, $user->password)) {
                 $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
                     $user = DB::table('users')->where('email', $request->email)->first();
-                    $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
+                   // $tokenResult = $user->createToken('nzvenzvana')->plainTextToken;
 
                     $response = [
                         'success' => true,
@@ -286,10 +285,10 @@ class UserController extends Controller
                         'user_id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
-                        'phoneNumber' => $user->phoneNumber,
+                        //'phoneNumber' => $user->phoneNumber,
                         'profilePic' => $user->profile_pic,
                         'subscription_end' => $subscription_plan,
-                        'token' => $tokenResult
+                       // 'token' => $tokenResult
                     ];
                     $status_code = 200;
                     return response($response, $status_code);
