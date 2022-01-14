@@ -18,6 +18,6 @@ Route::post('/phone-login',[UserController::class,'phoneLoginData']);
 Route::post('/email-login',[UserController::class,'emailLoginData']);
 Route::post('/phone-register',[UserController::class,'phoneRegisterData']);
 Route::post('/email-register',[UserController::class,'emailRegisterData']);
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum', function () {
+    Route::get('/series',[SeriesController::class,'index']);
 });
