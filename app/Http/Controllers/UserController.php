@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -198,18 +197,17 @@ class UserController extends Controller
         $subscription_end = "null";
 
         if($registered_user) {
-            if (Auth::attempt(['phoneNumber' => $request->phoneNumber, 'password' => $request->password])) {
+            $user = DB::table('users')->where('phoneNumber', $logging_phoneNumber)->first();
+            if (Hash::check($request->password, $user->password)) {
                 $registered_but_suspended_user = User::where('phoneNumber', $logging_phoneNumber)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
-                $user = DB::table('users')->where('phoneNumber', $logging_phoneNumber)->first();
+
                 $activated_user = User::where('phoneNumber', $logging_phoneNumber)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 $fetched_subscription = Payments::where('user_id', $user->id)->whereNotNull('plan_name')->exists();
                 if ($activated_user) {
                     if ($fetched_subscription == true) {
                         $subscription_end = Payments::where('user_id', $user->id)->orderBy('updated_at','DESC')->first()->end_date;
                     }
-
-                    $auth = Auth::user();
-                    $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
+                    $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
 
                     $response = [
                         "success" => "true",
@@ -261,12 +259,11 @@ class UserController extends Controller
         if($registered_user == true) {
             $user = User::where('email', $request->email)->first();
             $subscription_plan = "null";
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if(Hash::check($request->password, $user->password)) {
                 $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
-                    $auth = Auth::user();
-                    $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
+                    $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
                     $response = [
                         'success' => true,
                         'message' => 'Welcome back',

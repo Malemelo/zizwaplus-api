@@ -19,6 +19,6 @@ Route::post('/phone-login',[UserController::class,'phoneLoginData']);
 Route::post('/login',[UserController::class,'emailLoginData']);
 Route::post('/phone-register',[UserController::class,'phoneRegisterData']);
 Route::post('/register',[UserController::class,'emailRegisterData']);
-Route::middleware(['auth:sanctum'])->group(function(){
+Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
     Route::get('/series',[SeriesController::class,'index']);
 });
