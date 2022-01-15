@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,6 @@ Route::post('/phone-login',[UserController::class,'phoneLoginData']);
 Route::post('/email-login',[UserController::class,'emailLoginData']);
 Route::post('/phone-register',[UserController::class,'phoneRegisterData']);
 Route::post('/email-register',[UserController::class,'emailRegisterData']);
-Route::middleware('auth:sanctum', function () {
+Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/series',[SeriesController::class,'index']);
 });
