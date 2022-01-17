@@ -12,7 +12,7 @@ class MovieController extends Controller
 {
     public function feature_movie()
     {
-        $feature_movie = Movie::where('feature',1)->where('published',1)->first();
+        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
 
         $response = [
             'id' => $feature_movie->id,
