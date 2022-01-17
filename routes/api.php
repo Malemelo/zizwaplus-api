@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -21,4 +22,9 @@ Route::post('/phone-register',[UserController::class,'phoneRegisterData']);
 Route::post('/register',[UserController::class,'emailRegisterData']);
 Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
     Route::get('/series',[SeriesController::class,'index']);
+    Route::get('/feature', [MovieController::class,'feature_movie']);
+    Route::get('/popular', [MovieController::class,'popular_movies']);
+    Route::get('/originals', [MovieController::class,'originals']);
+    Route::get('/new', [MovieController::class,'new_release']);
+    Route::get('/coming_soon', [MovieController::class,'coming_soon']);
 });
