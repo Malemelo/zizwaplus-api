@@ -18,7 +18,9 @@ class MovieController extends Controller
             'id' => $feature_movie->id,
             'title' => Title::where('id',$feature_movie->title_id)->first()->title,
             'sub_title' => Title::where('id',$feature_movie->title_id)->first()->Sub_title,
-            'thumbnail' => $feature_movie->thumbnail
+            'thumbnail' => $feature_movie->thumbnail,
+            'trailer' => $feature_movie->trailer,
+            'video' => $feature_movie->video
         ];
         return response()->json($response, 200);
     }
