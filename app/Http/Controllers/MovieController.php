@@ -28,7 +28,7 @@ class MovieController extends Controller
 
     public function popular()
     {
-        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderBy('DESC','updated_at')->get(10);
+        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->get(10);
         return response()->json($zizwa_plus_popular, 200);
     }
 
