@@ -22,13 +22,13 @@ class MovieController extends Controller
 
     public function originals()
     {
-        $zizwa_plus_originals = Movie::where('published',1)->where('originals',1)->orderBy('DESC','updated_at')->paginate(10);
+        $zizwa_plus_originals = Movie::where('published',1)->where('originals',1)->orderByDesc("updated_at")->paginate(5);
         return response()->json($zizwa_plus_originals, 200);
     }
 
     public function popular()
     {
-        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->get(10);
+        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->paginate(5);
         return response()->json($zizwa_plus_popular, 200);
     }
 
