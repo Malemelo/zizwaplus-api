@@ -14,9 +14,6 @@ class Feature extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'title' => $this->title_id
-        ];
+        return parent::toArray($request);
     }
 }
