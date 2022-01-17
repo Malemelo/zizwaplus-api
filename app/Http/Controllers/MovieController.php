@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Feature;
 use App\Models\Movie;
 use App\Models\Type;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ class MovieController extends Controller
     public function feature_movie()
     {
         $feature_movie = Movie::where('feature',1)->where('published',1)->first();
-        return response()->json($feature_movie, 200);
+        return Feature::make($feature_movie);
     }
 
     public function new_release()
