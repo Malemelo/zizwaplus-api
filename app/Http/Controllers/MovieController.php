@@ -10,7 +10,7 @@ class MovieController extends Controller
 {
     public function feature_movie()
     {
-        $feature_movie = Movie::where('feature',1)->where('published',1)->where('type',1)->first();
+        $feature_movie = Movie::where('feature',1)->where('published',1)->first();
         return response()->json($feature_movie, 200);
     }
 
