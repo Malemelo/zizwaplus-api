@@ -39,13 +39,13 @@ class MovieController extends Controller
 
     public function popular()
     {
-        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->paginate(5);
+        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->take(10)->get();
         return response()->json($zizwa_plus_popular, 200);
     }
 
     public function coming_soon()
     {
-        $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderBy('DESC','updated_at')->get(10);
+        $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderBy('DESC','updated_at')->take(10)->get();
         return response()->json($coming_soon, 200);
     }
 
