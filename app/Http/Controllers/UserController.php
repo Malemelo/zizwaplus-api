@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Movie;
 use App\Models\Payments;
+use App\Models\Title;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -260,6 +262,7 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->first();
             $subscription_plan = "null";
             if(Hash::check($request->password, $user->password)) {
+                $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
                 $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
@@ -273,7 +276,14 @@ class UserController extends Controller
                         'phoneNumber' => $user->phoneNumber,
                         'profilePic' => $user->profile_pic,
                         'subscription_end' => $subscription_plan,
-                        'token' => $token
+                        'token' => $token,
+                        'feature_movie_id' => $feature_movie->id,
+                        'feature_movie_title' => Title::where('id',$feature_movie->title_id)->first()->title,
+                        'feature_movie_sub_title' => Title::where('id',$feature_movie->title_id)->first()->Sub_title,
+                        'feature_movie_thumbnail' => $feature_movie->thumbnail,
+                        'feature_movie_trailer' => $feature_movie->trailer,
+                        'feature_movie_video' => $feature_movie->video,
+                        'feature_movie_description' => $feature_movie->description
                     ];
                     $status_code = 200;
                     return response()->json($response, $status_code);
