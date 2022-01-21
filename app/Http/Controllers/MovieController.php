@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Feature;
+use App\Http\Resources\FeatureMovie;
 use App\Http\Resources\PopularMovie;
 use App\Http\Resources\PopularMovies;
 use App\Models\Movie;
@@ -15,16 +16,7 @@ class MovieController extends Controller
     public function feature_movie()
     {
         $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
-
-        $response = [
-            'id' => $feature_movie->id,
-            'title' => Title::where('id',$feature_movie->title_id)->first()->title,
-            'sub_title' => Title::where('id',$feature_movie->title_id)->first()->Sub_title,
-            'thumbnail' => $feature_movie->thumbnail,
-            'trailer' => $feature_movie->trailer,
-            'video' => $feature_movie->video
-        ];
-        return response()->json($response, 200);
+        return FeatureMovie::make($feature_movie);
     }
 
     public function new_release()

@@ -16,7 +16,7 @@ class PopularMovie extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => (new MovieTitle($this->title)),
+            'title' => $this->title,
             'episode' => $this->episode,
             'type' => $this->type,
             'year' => $this->year,
