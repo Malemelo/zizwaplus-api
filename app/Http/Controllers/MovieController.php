@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ComingSoonMovie;
 use App\Http\Resources\Feature;
 use App\Http\Resources\FeatureMovie;
 use App\Http\Resources\PopularMovie;
@@ -40,7 +41,7 @@ class MovieController extends Controller
     public function coming_soon()
     {
         $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderBy('DESC','updated_at')->take(10)->get();
-        return response()->json($coming_soon, 200);
+        return ComingSoonMovie::collection($coming_soon);
     }
 
 

@@ -14,6 +14,18 @@ class Movie extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'episode' => $this->episode,
+            'type' => $this->type,
+            'year' => $this->year,
+            'thumbnail' => $this->thumbnail,
+            'trailer' => $this->trailer,
+            'video' => $this->video,
+            'description' => $this->description,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at
+        ];
     }
 }
