@@ -7,10 +7,8 @@ use App\Http\Resources\Feature;
 use App\Http\Resources\FeatureMovie;
 use App\Http\Resources\PopularMovie;
 use App\Http\Resources\PopularMovies;
+use App\Http\Resources\SeriesMovie;
 use App\Models\Movie;
-use App\Models\Title;
-use App\Models\Type;
-use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -22,7 +20,7 @@ class MovieController extends Controller
 
     public function new_release()
     {
-        $new_on_zizwa_plus = Movie::where('published',1)->where('type',1)->orderBy('DESC','updated_at')->get(10);
+        $new_on_zizwa_plus = Movie::where('published',1)->where('type',1)->orderByDesc("updated_at")->get(10);
         return response()->json($new_on_zizwa_plus, 200);
     }
 
@@ -40,8 +38,20 @@ class MovieController extends Controller
 
     public function coming_soon()
     {
-        $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderBy('DESC','updated_at')->take(10)->get();
+        $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderByDesc("updated_at")->take(10)->get();
         return ComingSoonMovie::collection($coming_soon);
+    }
+
+    public function series()
+    {
+        $series = Movie::where('published',1)->where('type','series')->orderByDesc("updated_at")->take(10)->get();
+        return SeriesMovie::collection($series);
+    }
+
+    public function movies()
+    {
+        $movies = Movie::where('published',1)->where('type','movie')->orderByDesc("updated_at")->take(10)->get();
+        return \App\Http\Resources\Movie::collection($movies);
     }
 
 

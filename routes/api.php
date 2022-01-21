@@ -21,10 +21,11 @@ Route::post('/login',[UserController::class,'emailLoginData']);
 Route::post('/phone-register',[UserController::class,'phoneRegisterData']);
 Route::post('/register',[UserController::class,'emailRegisterData']);
 Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
-    Route::get('/series',[SeriesController::class,'index']);
+    Route::get('/series',[SeriesController::class,'series']);
     Route::get('/feature', [MovieController::class,'feature_movie']);
     Route::get('/popular', [MovieController::class,'popular']);
     Route::get('/originals', [MovieController::class,'originals']);
     Route::get('/new', [MovieController::class,'new_release']);
     Route::get('/coming_soon', [MovieController::class,'coming_soon']);
+    Route::get('/movies', [MovieController::class,'movies']);
 });
