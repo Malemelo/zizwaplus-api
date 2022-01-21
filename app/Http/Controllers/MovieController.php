@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Feature;
+use App\Http\Resources\PopularMovie;
+use App\Http\Resources\PopularMovies;
 use App\Models\Movie;
 use App\Models\Title;
 use App\Models\Type;
@@ -40,7 +42,7 @@ class MovieController extends Controller
     public function popular()
     {
         $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->take(10)->get();
-        return response()->json($zizwa_plus_popular, 200);
+        return PopularMovie::collection($zizwa_plus_popular);
     }
 
     public function coming_soon()
