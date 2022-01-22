@@ -14,8 +14,8 @@ class MovieController extends Controller
 {
     public function feature_movie()
     {
-        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
-        return FeatureMovie::make($feature_movie);
+        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->get();
+        return FeatureMovie::collection($feature_movie);
     }
 
     public function new_release()
