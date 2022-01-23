@@ -18,6 +18,12 @@ class MovieController extends Controller
         return FeatureMovie::collection($feature_movie);
     }
 
+    public function front_video()
+    {
+        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
+        return FeatureMovie::make($feature_movie);
+    }
+
     public function all_feature_movies()
     {
         $feature_movies = Movie::inRandomOrder()->where('feature',1)->where('published',1)->get();

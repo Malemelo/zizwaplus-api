@@ -34,4 +34,5 @@ Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
     Route::get('/all/coming_soon', [MovieController::class,'all_coming_soon']);
     Route::get('/all/series', [MovieController::class,'all_series']);
     Route::get('/all/movies', [MovieController::class,'all_movies']);
+    Route::get('/front/video', [MovieController::class,'front_video']);
 });
