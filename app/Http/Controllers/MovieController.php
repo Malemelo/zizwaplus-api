@@ -60,13 +60,13 @@ class MovieController extends Controller
         return ComingSoonMovie::collection($coming_soon);
     }
 
-    public function series()
+    public function all_series()
     {
         $series = Movie::where('published',1)->where('type','series')->orderByDesc("updated_at")->get();
         return SeriesMovie::collection($series);
     }
 
-    public function movies()
+    public function all_movies()
     {
         $movies = Movie::where('published',1)->where('type','movie')->orderByDesc("updated_at")->get();
         return \App\Http\Resources\Movie::collection($movies);
