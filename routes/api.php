@@ -28,4 +28,8 @@ Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
     Route::get('/new', [MovieController::class,'new_release']);
     Route::get('/coming_soon', [MovieController::class,'coming_soon']);
     Route::get('/movies', [MovieController::class,'movies']);
+    Route::get('/movies/{id}', [MovieController::class,'movie_by_title']);
+    Route::get('/all/popular', [MovieController::class,'all_popular']);
+    Route::get('/all/feature', [MovieController::class,'all_feature_movies']);
+    Route::get('/all/coming_soon', [MovieController::class,'all_coming_soon']);
 });

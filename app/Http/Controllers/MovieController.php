@@ -14,8 +14,14 @@ class MovieController extends Controller
 {
     public function feature_movie()
     {
-        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->get();
+        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->take(10)->get();
         return FeatureMovie::collection($feature_movie);
+    }
+
+    public function all_feature_movies()
+    {
+        $feature_movies = Movie::inRandomOrder()->where('feature',1)->where('published',1)->get();
+        return FeatureMovie::collection($feature_movies);
     }
 
     public function new_release()
@@ -26,7 +32,7 @@ class MovieController extends Controller
 
     public function originals()
     {
-        $zizwa_plus_originals = Movie::where('published',1)->where('originals',1)->orderByDesc("updated_at")->paginate(5);
+        $zizwa_plus_originals = Movie::where('published',1)->where('originals',1)->orderByDesc("updated_at")->take(10)->get();
         return response()->json($zizwa_plus_originals, 200);
     }
 
@@ -36,22 +42,40 @@ class MovieController extends Controller
         return PopularMovie::collection($zizwa_plus_popular);
     }
 
+    public function all_popular()
+    {
+        $zizwa_plus_popular = Movie::where('published',1)->where('popular',1)->orderByDesc("updated_at")->get();
+        return PopularMovie::collection($zizwa_plus_popular);
+    }
+
     public function coming_soon()
     {
         $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderByDesc("updated_at")->take(10)->get();
         return ComingSoonMovie::collection($coming_soon);
     }
 
+    public function all_coming_soon()
+    {
+        $coming_soon = Movie::where('published',1)->where('coming_soon',1)->orderByDesc("updated_at")->get();
+        return ComingSoonMovie::collection($coming_soon);
+    }
+
     public function series()
     {
-        $series = Movie::where('published',1)->where('type','series')->orderByDesc("updated_at")->take(10)->get();
+        $series = Movie::where('published',1)->where('type','series')->orderByDesc("updated_at")->get();
         return SeriesMovie::collection($series);
     }
 
     public function movies()
     {
-        $movies = Movie::where('published',1)->where('type','movie')->orderByDesc("updated_at")->take(10)->get();
+        $movies = Movie::where('published',1)->where('type','movie')->orderByDesc("updated_at")->get();
         return \App\Http\Resources\Movie::collection($movies);
+    }
+
+    public function movie_by_title($id)
+    {
+        $movie_by_title = Movie::where('title_id',$id)->where('published',1)->where('type','movie')->orderByDesc("updated_at")->get();
+        return \App\Http\Resources\Movie::collection($movie_by_title);
     }
 
 

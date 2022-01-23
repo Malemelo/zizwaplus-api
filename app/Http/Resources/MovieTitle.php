@@ -14,6 +14,14 @@ class MovieTitle extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'type' => $this->type,
+            'title' => $this->title,
+            'sub_title' => $this->sub_title,
+            'original' => $this->original,
+            'thumbnail' => $this->thumbnail,
+            'description' => $this->description
+        ];
     }
 }
