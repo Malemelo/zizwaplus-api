@@ -73,6 +73,8 @@ class UserController extends Controller
                     $response = [
                         "success" => "true",
                         "message" => "Enjoy video streaming re-imagined",
+                        "id" => $email_user->id,
+                        "unique_code" => $email_user->unique_code,
                         "name" => $email_user->name,
                         "email" => $email_user->email,
                         "phoneNumber" => $email_user->phoneNumber,
@@ -161,6 +163,8 @@ class UserController extends Controller
                 $response = [
                     "success" => "true",
                     "message" => "Enjoy video streaming re-imagined",
+                    "id" => $client_user->id,
+                    "unique_code" => $client_user->unique_code,
                     "name" => $client_user->name,
                     "email" => $client_user->email,
                     "phoneNumber" => $client_user->phoneNumber,
@@ -214,6 +218,8 @@ class UserController extends Controller
                     $response = [
                         "success" => "true",
                         "message" => "Account created successfully",
+                        "id" => $user->id,
+                        "unique_code" => $user->unique_code,
                         "name" => $user->name,
                         "email" => $user->email,
                         "phoneNumber" => $user->phoneNumber,
@@ -271,19 +277,13 @@ class UserController extends Controller
                         'success' => true,
                         'message' => 'Welcome back',
                         'user_id' => $user->id,
+                        'unique_code' => $user->unique_code,
                         'name' => $user->name,
                         'email' => $user->email,
                         'phoneNumber' => $user->phoneNumber,
                         'profilePic' => $user->profile_pic,
                         'subscription_end' => $subscription_plan,
                         'token' => $token,
-                        'feature_movie_id' => $feature_movie->id,
-                        'feature_movie_title' => Title::where('id',$feature_movie->title_id)->first()->title,
-                        'feature_movie_sub_title' => Title::where('id',$feature_movie->title_id)->first()->Sub_title,
-                        'feature_movie_thumbnail' => $feature_movie->thumbnail,
-                        'feature_movie_trailer' => $feature_movie->trailer,
-                        'feature_movie_video' => $feature_movie->video,
-                        'feature_movie_description' => $feature_movie->description
                     ];
                     $status_code = 200;
                     return response()->json($response, $status_code);
