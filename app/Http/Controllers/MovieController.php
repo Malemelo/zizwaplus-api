@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ComingSoonMovie;
 use App\Http\Resources\Feature;
 use App\Http\Resources\FeatureMovie;
+use App\Http\Resources\FrontMovie;
 use App\Http\Resources\PopularMovie;
 use App\Http\Resources\PopularMovies;
 use App\Http\Resources\SeriesMovie;
@@ -20,8 +21,8 @@ class MovieController extends Controller
 
     public function front_video()
     {
-        $feature_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
-        return FeatureMovie::make($feature_movie);
+        $front_movie = Movie::inRandomOrder()->where('feature',1)->where('published',1)->first();
+        return FrontMovie::make($front_movie);
     }
 
     public function all_feature_movies()
