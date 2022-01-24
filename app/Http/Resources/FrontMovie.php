@@ -20,11 +20,12 @@ class FrontMovie extends JsonResource
             'episode' => $this->episode,
             'type' => $this->type,
             'year' => $this->year,
+            'title_text_image' => $this->movie_title_image,
             'thumbnail' => $this->thumbnail,
             'trailer' => $this->trailer,
             'video' => $this->video,
             'video_id' => $this->video_id,
-            'description' => $this->description,
+            'description' => $this->description
         ];
     }
 }
