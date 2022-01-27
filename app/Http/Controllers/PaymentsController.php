@@ -331,7 +331,7 @@ class PaymentsController extends Controller
             $sub_response = [
                 "success" => true,
                 "message" => "Account active",
-                "end_date" => $end_date
+                "end_date" => $end_date->diffForHumans()
 
             ];
 
