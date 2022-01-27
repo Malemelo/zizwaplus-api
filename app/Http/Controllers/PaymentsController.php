@@ -339,11 +339,11 @@ class PaymentsController extends Controller
         }
 
         if(!$subscription){
-            $end_date = Payments::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->first()->end_date;
+
             $sub_response = [
                 "success" => false,
                 "message" => "Account active",
-                "end_date" => $end_date
+
             ];
 
             return response()->json($sub_response, 400);
