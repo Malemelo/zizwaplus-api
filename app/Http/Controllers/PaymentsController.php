@@ -6,6 +6,7 @@ use App\Models\MtnPaymentIntent;
 use App\Models\Payments;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
