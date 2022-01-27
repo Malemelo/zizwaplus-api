@@ -301,7 +301,8 @@ class PaymentsController extends Controller
                 }else{
                     $pay_response = [
                         "success" => false,
-                        "message" => "Oops, payment has failed, try again later"
+                        "message" => "Oops, payment has failed, try again later",
+                        "error" => $status_json
                     ];
                     return response()->json($pay_response, 400);
                 }
@@ -309,16 +310,18 @@ class PaymentsController extends Controller
             }else{
                 $pay_response = [
                     "success" => false,
-                    "message" => "Oops, payment has failed, try again later"
+                    "message" => "Oops, payment has failed, try again later",
+                    "error" => $status_json
                 ];
                 return response()->json($pay_response, 400);
             }
         }else{
-            $response = [
+            $pay_response = [
                 "success" => false,
-                "message" => "Already have an active subscription, enjoy"
+                "message" => "Oops, payment has failed, try again later",
+                "error" => "server error"
             ];
-            return response()->json($response, 200);
+            return response()->json($pay_response, 200);
         }
     }
 
