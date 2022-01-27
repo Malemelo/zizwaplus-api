@@ -30,7 +30,7 @@ class PaymentsController extends Controller
             $amount = 822.10;
         }
 
-        $client_user = User::where('id', session('LoggedUser'))->first();
+        $client_user = User::where('id', Auth::user()->id)->first();
 
         $payer_number = $request->phoneNumber;
         $receipt_number = Str::uuid()->toString();
@@ -101,7 +101,7 @@ class PaymentsController extends Controller
 
     public function ConfirmPayment()
     {
-        $reference = MtnPaymentIntent::where('user_id', session('LoggedUser'))->where('status', 0)->orderBy('created_at', 'desc')->first();
+        $reference = MtnPaymentIntent::where('id', Auth::user()->id)->where('status', 0)->orderBy('created_at', 'desc')->first();
         //$reference = "efa46c0a-8053-475c-ac9c-e8b2dd70635c";
 
         if($reference){
