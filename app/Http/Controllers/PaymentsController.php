@@ -78,7 +78,7 @@ class PaymentsController extends Controller
 
         if ($result) {
             $initaialised_transaction = MtnPaymentIntent::create([
-                'user_id' => session('LoggedUser'),
+                'user_id' => $client_user->id,
                 'reference_id' => $reference,
                 'receipt_number' => $receipt_number,
                 'plan_name' => $request->plan,
@@ -128,6 +128,7 @@ class PaymentsController extends Controller
             $status_json = $payment_response->json();
 
             if($status_state == 200){
+                $client_user = User::where('id', Auth::user()->id)->first();
                 if($status_json['status'] == "SUCCESSFUL"){
                     $month_end = Date('y:m:d', strtotime('+30 days'));
                     $year_end = Date('y:m:d', strtotime('+365 days'));
@@ -136,7 +137,7 @@ class PaymentsController extends Controller
                     if($check_intent){
                         if ($check_intent->plan_name == "monthly") {
                             $transaction = Payments::create([
-                                'user_id' => session('LoggedUser'),
+                                'user_id' => $client_user->id,
                                 'subtotal' => $check_intent->plan_amount,
                                 'total' => $check_intent->plan_amount,
                                 'plan_type' => "monthly",
@@ -160,7 +161,7 @@ class PaymentsController extends Controller
                         }
                         if ($check_intent->plan_name == "yearly") {
                             $transaction = Payments::create([
-                                'user_id' => session('LoggedUser'),
+                                'user_id' => $client_user->id,
                                 'subtotal' => $check_intent->plan_amount,
                                 'total' => $check_intent->plan_amount,
                                 'plan_type' => "yearly",
@@ -233,7 +234,7 @@ class PaymentsController extends Controller
                 // $amount = 822;
             }
 
-            $client_user = User::where('id', session('LoggedUser'))->first();
+            $client_user = User::where('id', Auth::user()->id)->first();
 
             $payer_number = $request->phoneNumber;
             $receipt_number = Str::uuid()->toString();
@@ -253,7 +254,7 @@ class PaymentsController extends Controller
                     $year_end = Date('y:m:d', strtotime('+365 days'));
                     if($request->plan == "monthly"){
                         $transaction = Payments::create([
-                            'user_id' => session('LoggedUser'),
+                            'user_id' => $client_user->id,
                             'subtotal' => $amount,
                             'total' => $amount,
                             'plan_type' => "monthly",
@@ -277,7 +278,7 @@ class PaymentsController extends Controller
 
                     if ($request->plan == "yearly") {
                         $transaction = Payments::create([
-                            'user_id' => session('LoggedUser'),
+                            'user_id' => $client_user->id,
                             'subtotal' => $amount,
                             'total' => $amount,
                             'plan_type' => "yearly",
