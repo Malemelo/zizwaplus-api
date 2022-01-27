@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -35,4 +36,8 @@ Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
     Route::get('/all/series', [MovieController::class,'all_series']);
     Route::get('/all/movies', [MovieController::class,'all_movies']);
     Route::get('/front/video', [MovieController::class,'front_video']);
+    Route::get('/front/video', [MovieController::class,'front_video']);
+    Route::post('/zamtel/pay', [PaymentsController::class, 'zamtelPay']);
+    Route::post('/mtn/pay', [PaymentsController::class, 'mtnPay']);
+    Route::get('/user/status', [PaymentsController::class, 'userStatus']);
 });
