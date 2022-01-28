@@ -10,6 +10,7 @@ use App\Http\Resources\PopularMovie;
 use App\Http\Resources\PopularMovies;
 use App\Http\Resources\SeriesMovie;
 use App\Models\Movie;
+use App\Models\Title;
 
 class MovieController extends Controller
 {
@@ -77,6 +78,12 @@ class MovieController extends Controller
     {
         $movies = Movie::where('published',1)->where('type','movie')->orderByDesc("updated_at")->get();
         return \App\Http\Resources\Movie::collection($movies);
+    }
+
+    public function movie_title()
+    {
+        $movie_title = Title::where("published", 1)->orderByDesc("updated_at")->get();
+        return \App\Http\Resources\Movie::collection($movie_title);
     }
 
     public function movie_by_title($id)
