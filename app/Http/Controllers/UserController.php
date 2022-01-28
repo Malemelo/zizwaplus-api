@@ -80,6 +80,7 @@ class UserController extends Controller
                         "phoneNumber" => $email_user->phoneNumber,
                         "profilePic" => $email_user->profile_pic,
                         "subscriptionPlan" => null,
+                        'stripe_customer_id' => $email_user->stripe_customer_id,
                         "token" => $token
                     ];
                     $status_code = 201;
@@ -170,6 +171,7 @@ class UserController extends Controller
                     "phoneNumber" => $client_user->phoneNumber,
                     "profilePic" => $client_user->profile_pic,
                     "subscriptionPlan" => null,
+                    'stripe_customer_id' => $client_user->stripe_customer_id,
                     "token" => $token
                 ];
                 $status_code = 201;
@@ -225,6 +227,7 @@ class UserController extends Controller
                         "phoneNumber" => $user->phoneNumber,
                         "profilePic" => $user->profile_pic,
                         "subscriptionPlan" => $subscription_end,
+                        'stripe_customer_id' => $user->stripe_customer_id,
                         "token" => $token
                     ];
                     $status_code = 201;
@@ -283,6 +286,7 @@ class UserController extends Controller
                         'phoneNumber' => $user->phoneNumber,
                         'profilePic' => $user->profile_pic,
                         'subscription_end' => $subscription_plan,
+                        'stripe_customer_id' => $user->stripe_customer_id,
                         'token' => $token,
                     ];
                     $status_code = 200;
