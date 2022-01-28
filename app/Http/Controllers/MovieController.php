@@ -88,8 +88,8 @@ class MovieController extends Controller
 
     public function movie_by_title($id)
     {
-        $movie_by_title = Movie::where('title_id',$id)->first();
-        return \App\Http\Resources\Movie::make($movie_by_title);
+        $movie_by_title = Movie::where('title_id',$id)->get();
+        return \App\Http\Resources\Movie::collection($movie_by_title);
     }
 
 
