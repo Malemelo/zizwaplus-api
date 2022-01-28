@@ -88,7 +88,7 @@ class MovieController extends Controller
 
     public function movie_by_title($id)
     {
-        $movie_by_title = Movie::where('title_id',$id)->orderByAsc("created_at")->get();
+        $movie_by_title = Movie::where('title_id',$id)->orderBy('created_at', 'asc')->get();
         return \App\Http\Resources\Movie::collection($movie_by_title);
     }
 
