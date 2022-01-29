@@ -15,6 +15,33 @@ use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
+    public function generate_code()
+    {
+        $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $res = "";
+        for ($i = 0; $i < 8; $i++) {
+            $res .= $chars[mt_rand(0, strlen($chars)-1)];
+        }
+        return $res;
+    }
+
+    public function uniqueCode()
+    {
+        $user_count = User::where('unique_code', null)->count();
+
+        for($i = 0; $i < $user_count; $i++){
+            $unique_code = $this->generate_code();
+            $update_each_record = User::where('unique_code',null)->first()->update(['unique_code' => $unique_code]);
+        }
+
+
+        $json = [
+            'total_users' => $user_count,
+            'unique_code' => $unique_code
+        ];
+        return response()->json($json);
+    }
+
     public function emailRegisterData(Request $request)
     {
         //validate the user unput
@@ -145,12 +172,14 @@ class UserController extends Controller
         ]);
 
         $customer_id = $new_customer->id;
+        $unique_code = $this->generate_code();
 
         $client_user = User::create([
             'name' => $request->name,
             'phoneNumber' => $registering_phoneNumber,
             'password' => Hash::make($request->password),
-            'stripe_customer_id' => $customer_id
+            'stripe_customer_id' => $customer_id,
+            'unique_code' => $unique_code
         ]);
 
         $client_user->save();
@@ -165,14 +194,14 @@ class UserController extends Controller
                 $response = [
                     "success" => "true",
                     "message" => "Enjoy video streaming re-imagined",
-                    "id" => $client_user->id,
-                    "unique_code" => $client_user->unique_code,
-                    "name" => $client_user->name,
-                    "email" => $client_user->email,
-                    "phoneNumber" => $client_user->phoneNumber,
-                    "profilePic" => $client_user->profile_pic,
+                    "id" => $auth->id,
+                    "unique_code" => $auth->unique_code,
+                    "name" => $auth->name,
+                    "email" => $auth->email,
+                    "phoneNumber" => $auth->phoneNumber,
+                    "profilePic" => $auth->profile_pic,
                     "subscriptionPlan" => null,
-                    'stripe_customer_id' => $client_user->stripe_customer_id,
+                    'stripe_customer_id' => $auth->stripe_customer_id,
                     "token" => $token
                 ];
                 $status_code = 201;
