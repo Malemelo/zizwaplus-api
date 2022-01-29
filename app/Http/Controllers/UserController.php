@@ -80,6 +80,7 @@ class UserController extends Controller
         ]);
 
         $customer_id = $new_customer->id;
+        $unique_code = $this->generate_code();
 
         if($customer_id){
             $email_user = User::create([
@@ -87,7 +88,8 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'phoneNumber' => $request->phoneNumber,
-                'stripe_customer_id' => $customer_id
+                'stripe_customer_id' => $customer_id,
+                'unique_code' => $unique_code
             ]);
 
             $email_user->save();
@@ -101,14 +103,14 @@ class UserController extends Controller
                     $response = [
                         "success" => "true",
                         "message" => "Enjoy video streaming re-imagined",
-                        "id" => $email_user->id,
-                        "unique_code" => $email_user->unique_code,
-                        "name" => $email_user->name,
-                        "email" => $email_user->email,
-                        "phoneNumber" => $email_user->phoneNumber,
-                        "profilePic" => $email_user->profile_pic,
+                        "id" => $auth->id,
+                        "unique_code" => $auth->unique_code,
+                        "name" => $auth->name,
+                        "email" => $auth->email,
+                        "phoneNumber" => $auth->phoneNumber,
+                        "profilePic" => $auth->profile_pic,
                         "subscriptionPlan" => null,
-                        'stripe_customer_id' => $email_user->stripe_customer_id,
+                        'stripe_customer_id' => $auth->stripe_customer_id,
                         "token" => $token
                     ];
                     $status_code = 201;
