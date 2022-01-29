@@ -30,7 +30,8 @@ class User extends Authenticatable
         'isSuspended',
         'optFourDigitCode',
         'stripe_customer_id',
-        'stripe_id'
+        'stripe_id',
+        'unique_code'
     ];
 
     public function payments()

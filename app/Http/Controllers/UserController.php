@@ -51,6 +51,8 @@ class UserController extends Controller
             'password' => ['required'],
         ]);
 
+        $unique_code = $this->generate_code();
+
         $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
         $registered_user = User::where('email', $request->email)->whereNotNull('email')->exists();
 
@@ -80,7 +82,7 @@ class UserController extends Controller
         ]);
 
         $customer_id = $new_customer->id;
-        $unique_code = $this->generate_code();
+
 
         if($customer_id){
             $email_user = User::create([
