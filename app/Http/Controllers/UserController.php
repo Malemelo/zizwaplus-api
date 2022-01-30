@@ -104,7 +104,7 @@ class UserController extends Controller
                     $auth = Auth::user();
                     $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
 
-                    $session_count = StrictSession::where('user_id', $auth->id)->count();
+                    $session_count = StrictSession::where('user_id', $auth->id)->get()->count();
 
                     if($session_count > 2)
                     {
@@ -222,7 +222,7 @@ class UserController extends Controller
                 $auth = Auth::user();
                 $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
 
-                $session_count = StrictSession::where('user_id', $auth->id)->count();
+                $session_count = StrictSession::where('user_id', $auth->id)->get()->count();
 
                 if($session_count > 2)
                 {
@@ -303,7 +303,7 @@ class UserController extends Controller
                     }
                     $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
 
-                    $session_count = StrictSession::where('user_id', $user->id)->count();
+                    $session_count = StrictSession::where('user_id', $user->id)->get()->count();
 
                     if($session_count > 2)
                     {
@@ -385,7 +385,8 @@ class UserController extends Controller
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
                     $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
-                    $session_count = StrictSession::where('user_id', $user->id)->count();
+
+                    $session_count = StrictSession::where('user_id', $user->id)->get()->count();
 
                     if($session_count > 2)
                     {
