@@ -118,7 +118,7 @@ class UserController extends Controller
                         return response()->json($response, $status_code);
                     }
 
-                    if($session_count <= 2)
+                    if($session_count < 2)
                     {
                         $strict_session = StrictSession::create([
                             'user_id' => $auth->id,
@@ -236,7 +236,7 @@ class UserController extends Controller
                     return response()->json($response, $status_code);
                 }
 
-                if($session_count <= 2)
+                if($session_count < 2)
                 {
                     $strict_session = StrictSession::create([
                         'user_id' => $auth->id,
@@ -317,7 +317,7 @@ class UserController extends Controller
                         return response()->json($response, $status_code);
                     }
 
-                    if($session_count <= 2)
+                    if($session_count < 2)
                     {
                         $strict_session = StrictSession::create([
                             'user_id' => $user->id,
@@ -400,7 +400,7 @@ class UserController extends Controller
                         return response()->json($response, $status_code);
                     }
 
-                    if($session_count <= 2)
+                    if($session_count < 2)
                     {
                         $strict_session = StrictSession::create([
                             'user_id' => $user->id,
