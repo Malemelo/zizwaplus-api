@@ -114,7 +114,7 @@ class UserController extends Controller
                             "success" => false,
                             "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
                         ];
-                        $status_code = 401;
+                        $status_code = 400;
                         return response()->json($response, $status_code);
                     }
 
@@ -232,7 +232,7 @@ class UserController extends Controller
                         "success" => false,
                         "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
                     ];
-                    $status_code = 401;
+                    $status_code = 400;
                     return response()->json($response, $status_code);
                 }
 
@@ -396,7 +396,7 @@ class UserController extends Controller
                             "success" => false,
                             "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
                         ];
-                        $status_code = 401;
+                        $status_code = 400;
                         return response()->json($response, $status_code);
                     }
 
