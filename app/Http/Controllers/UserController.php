@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Redirect;
 class UserController extends Controller
 {
 
-    public function suspend()
+    public function logout()
     {
         $auth = Auth::user();
         $selected_user = StrictSession::where('user_id', $auth->id)->first();

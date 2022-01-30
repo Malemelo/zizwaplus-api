@@ -42,6 +42,5 @@ Route::middleware(['auth:sanctum'])->prefix('zp-u-acc')->group( function(){
     Route::post('/mtn/check', [PaymentsController::class, 'ConfirmPayment']);
     Route::get('/movie/title', [MovieController::class, 'movie_title']);
     Route::post('/user/status', [PaymentsController::class, 'userStatus']);
-    Route::post('/user/logout',[UserController::class,'suspend']);
-    Route::get('/user/happening', [UserController::class, 'happening']);
+    Route::get('/user/logout',[UserController::class,'logout']);
 });
