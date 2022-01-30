@@ -393,7 +393,7 @@ class UserController extends Controller
                             "success" => false,
                             "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
                         ];
-                        $status_code = 200;
+                        $status_code = 400;
                         return response()->json($deny_response, $status_code);
                     }
 
