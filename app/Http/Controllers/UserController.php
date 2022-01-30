@@ -384,14 +384,11 @@ class UserController extends Controller
                 $registered_but_suspended_user = User::where('email', $request->email)->where('isActive', 0)->where('accountDeleted', 0)->where('isSuspended', 1)->first();
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
-                    $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
-
                     $session_count = StrictSession::where('user_id', $user->id)->get()->count();
 
                     if($session_count == 3)
                     {
                         //deny entry
-
                         $response = [
                             "success" => false,
                             "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
@@ -402,6 +399,8 @@ class UserController extends Controller
 
                     if($session_count < 2)
                     {
+                        $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
+
                         $strict_session = StrictSession::create([
                             'user_id' => $user->id,
                             'device_id' => $request->device_id
