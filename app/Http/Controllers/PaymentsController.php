@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MtnPaymentIntent;
 use App\Models\Payments;
+use App\Models\StrictSession;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -325,21 +326,45 @@ class PaymentsController extends Controller
         }
     }
 
-    public function userStatus()
+    public function userStatus(Request $request)
     {
         $today = today()->format('Y-m-d');
         $subscription = Payments::where('user_id', Auth::user()->id)->whereDate('end_date', '>=' , $today)->orderBy('updated_at', 'desc')->first();
 
         if($subscription){
-            $end_date = Payments::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->first()->end_date;
-            $sub_response = [
-                "success" => true,
-                "message" => "Account active",
-                "end_date" => $end_date
+            $auth = Auth::user();
+            $session_count = StrictSession::where('user_id', $auth->id)->get()->count();
 
-            ];
+            if($session_count >= 3)
+            {
+                //deny entry
+                Auth::logout();
+                $deny_response = [
+                    "success" => false,
+                    "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
+                ];
+                $status_code = 400;
+                return response()->json($deny_response, $status_code);
+            }
 
-            return response()->json($sub_response, 200);
+            if($session_count <= 2)
+            {
+                $strict_session = StrictSession::create([
+                    'user_id' => $auth->id,
+                    'device_id' => $request->device_id
+                ]);
+
+                $end_date = Payments::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->first()->end_date;
+                $sub_response = [
+                    "success" => true,
+                    "message" => "Account active",
+                    "end_date" => $end_date
+
+                ];
+                return response()->json($sub_response, 200);
+            }
+
+
         }
 
         if(!$subscription){
