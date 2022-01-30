@@ -386,18 +386,18 @@ class UserController extends Controller
                 if ($activated_user) {
                     $session_count = StrictSession::where('user_id', $user->id)->get()->count();
 
-                    if($session_count == 3)
+                    if($session_count >= 3)
                     {
                         //deny entry
-                        $response = [
+                        $deny_response = [
                             "success" => false,
                             "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
                         ];
                         $status_code = 200;
-                        return response()->json($response, $status_code);
+                        return response()->json($deny_response, $status_code);
                     }
 
-                    if($session_count < 2)
+                    if($session_count <= 2)
                     {
                         $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
 
@@ -406,7 +406,7 @@ class UserController extends Controller
                             'device_id' => $request->device_id
                         ]);
 
-                        $response = [
+                        $accept_response = [
                             "success" => "true",
                             "message" => "Enjoy video streaming re-imagined",
                             "id" => $user->id,
@@ -420,7 +420,7 @@ class UserController extends Controller
                             "token" => $token
                         ];
                         $status_code = 200;
-                        return response()->json($response, $status_code);
+                        return response()->json($accept_response, $status_code);
                     }
 
                 } elseif ($registered_but_suspended_user) {
