@@ -50,6 +50,7 @@ class UserController extends Controller
             'name' => ['required', 'max:255'],
             'email' => ['required'],
             'password' => ['required'],
+            'device_id' => ['required']
         ]);
 
         $unique_code = $this->generate_code();
@@ -168,6 +169,7 @@ class UserController extends Controller
             'name' => ['required', 'max:255'],
             'phoneNumber' => ['required', 'min:9', 'max:9'],
             'password' => ['required'],
+            'device_id' => ['required']
         ]);
 
         $registering_phoneNumber = '+260' .$request->phoneNumber;
@@ -280,7 +282,8 @@ class UserController extends Controller
     {
         $request->validate([
             'phoneNumber' => ['required', 'min:9', 'max:9'],
-            'password' => ['required']
+            'password' => ['required'],
+            'device_id' => ['required']
         ]);
 
         $logging_phoneNumber = '+260' .$request->phoneNumber;
@@ -368,7 +371,8 @@ class UserController extends Controller
     {
         $request->validate([
             'email' => ['required'],
-            'password' => ['required']
+            'password' => ['required'],
+            'device_id' => ['required']
         ]);
 
         $registered_user = User::where('email', $request->email)->whereNotNull('email')->exists();
