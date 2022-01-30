@@ -337,7 +337,7 @@ class UserController extends Controller
                             'stripe_customer_id' => $user->stripe_customer_id,
                             "token" => $token
                         ];
-                        $status_code = 201;
+                        $status_code = 200;
                         return response()->json($response, $status_code);
                     }
 
@@ -420,7 +420,7 @@ class UserController extends Controller
                             'stripe_customer_id' => $user->stripe_customer_id,
                             "token" => $token
                         ];
-                        $status_code = 201;
+                        $status_code = 200;
                         return response()->json($response, $status_code);
                     }
 
