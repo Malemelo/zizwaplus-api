@@ -454,8 +454,6 @@ class UserController extends Controller
         $auth = Auth::user();
         $delete_session = StrictSession::where('user_id', $auth->id)->first()->delete();
 
-        Auth::logout();
-
         $logout_response = [
             "success" => false,
             "message" => "Logged out successfully"
