@@ -449,10 +449,11 @@ class UserController extends Controller
         }
     }
 
-    public function logout()
+    public function suspend()
     {
         $auth = Auth::user();
-        $delete_session = StrictSession::where('user_id', $auth->id)->first()->delete();
+        $selected_user = StrictSession::where('user_id', $auth->id)->first();
+        $delete_user = $selected_user->delete();
 
         $logout_response = [
             "success" => false,
