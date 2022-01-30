@@ -388,7 +388,7 @@ class UserController extends Controller
 
                     $session_count = StrictSession::where('user_id', $user->id)->get()->count();
 
-                    if($session_count > 3)
+                    if($session_count >= 3)
                     {
                         //deny entry
 
