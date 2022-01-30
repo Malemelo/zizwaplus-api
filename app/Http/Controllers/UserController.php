@@ -106,26 +106,26 @@ class UserController extends Controller
 
                     $session_count = StrictSession::where('user_id', $auth->id)->get()->count();
 
-                    if($session_count > 3)
+                    if($session_count >= 3)
                     {
                         //deny entry
 
-                        $response = [
+                        $deny_response = [
                             "success" => false,
-                            "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                            "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
                         ];
                         $status_code = 201;
-                        return response()->json($response, $status_code);
+                        return response()->json($deny_response, $status_code);
                     }
 
-                    if($session_count < 2)
+                    if($session_count <= 2)
                     {
                         $strict_session = StrictSession::create([
                             'user_id' => $auth->id,
                             'device_id' => $request->device_id
                         ]);
 
-                        $response = [
+                        $accept_response = [
                             "success" => "true",
                             "message" => "Enjoy video streaming re-imagined",
                             "id" => $auth->id,
@@ -139,7 +139,7 @@ class UserController extends Controller
                             "token" => $token
                         ];
                         $status_code = 201;
-                        return response()->json($response, $status_code);
+                        return response()->json($accept_response, $status_code);
                     }
 
                 }
@@ -224,26 +224,26 @@ class UserController extends Controller
 
                 $session_count = StrictSession::where('user_id', $auth->id)->get()->count();
 
-                if($session_count > 3)
+                if($session_count >= 3)
                 {
                     //deny entry
 
-                    $response = [
+                    $deny_response = [
                         "success" => false,
-                        "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                        "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
                     ];
                     $status_code = 201;
-                    return response()->json($response, $status_code);
+                    return response()->json($deny_response, $status_code);
                 }
 
-                if($session_count < 2)
+                if($session_count <= 2)
                 {
                     $strict_session = StrictSession::create([
                         'user_id' => $auth->id,
                         'device_id' => $request->device_id
                     ]);
 
-                    $response = [
+                    $accept_response = [
                         "success" => "true",
                         "message" => "Enjoy video streaming re-imagined",
                         "id" => $auth->id,
@@ -260,7 +260,7 @@ class UserController extends Controller
                     $sendSMS = Http::withoutVerifying()
                         ->post('https://bulksms.zamtel.co.zm/api/v2.1/action/send/api_key/1a06def69ef52e93d69337af7187becf/contacts/' .$registering_phoneNumber. '/senderId/Zizwaplus/message/Hi+' . $request->name . '%2C+welcome+to+Zizwaplus+your+amazing+video+on+demand+platform.+Subscribe+monthly+or+yearly+to+enjoy+our+premium+content.');
 
-                    return response()->json($response, $status_code);
+                    return response()->json($accept_response, $status_code);
                 }
 
 
@@ -305,26 +305,26 @@ class UserController extends Controller
 
                     $session_count = StrictSession::where('user_id', $user->id)->get()->count();
 
-                    if($session_count > 3)
+                    if($session_count >= 3)
                     {
                         //deny entry
 
-                        $response = [
+                        $deny_response = [
                             "success" => false,
-                            "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                            "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
                         ];
-                        $status_code = 200;
-                        return response()->json($response, $status_code);
+                        $status_code = 400;
+                        return response()->json($deny_response, $status_code);
                     }
 
-                    if($session_count < 2)
+                    if($session_count <= 2)
                     {
                         $strict_session = StrictSession::create([
                             'user_id' => $user->id,
                             'device_id' => $request->device_id
                         ]);
 
-                        $response = [
+                        $accept_response = [
                             "success" => "true",
                             "message" => "Enjoy video streaming re-imagined",
                             "id" => $user->id,
@@ -338,7 +338,7 @@ class UserController extends Controller
                             "token" => $token
                         ];
                         $status_code = 200;
-                        return response()->json($response, $status_code);
+                        return response()->json($accept_response, $status_code);
                     }
 
                 } elseif ($registered_but_suspended_user) {
@@ -391,7 +391,7 @@ class UserController extends Controller
                         //deny entry
                         $deny_response = [
                             "success" => false,
-                            "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                            "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
                         ];
                         $status_code = 400;
                         return response()->json($deny_response, $status_code);
@@ -447,5 +447,20 @@ class UserController extends Controller
             $status_code = 400;
             return response()->json($response, $status_code);
         }
+    }
+
+    public function logout()
+    {
+        $auth = Auth::user();
+        $delete_session = StrictSession::where('user_id', $auth->id)->first()->delete();
+
+        Auth::logout();
+
+        $logout_response = [
+            "success" => false,
+            "message" => "Logged out successfully"
+        ];
+        $logout_status = 200;
+        return response()->json($logout_response, $logout_status);
     }
 }
