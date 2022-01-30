@@ -338,7 +338,6 @@ class PaymentsController extends Controller
             if($session_count >= 3)
             {
                 //deny entry
-                Auth::logout();
                 $deny_response = [
                     "success" => false,
                     "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
@@ -349,11 +348,6 @@ class PaymentsController extends Controller
 
             if($session_count <= 2)
             {
-                $strict_session = StrictSession::create([
-                    'user_id' => $auth->id,
-                    'device_id' => $request->device_id
-                ]);
-
                 $end_date = Payments::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->first()->end_date;
                 $sub_response = [
                     "success" => true,
@@ -371,7 +365,7 @@ class PaymentsController extends Controller
 
             $sub_response = [
                 "success" => false,
-                "message" => "Account active",
+                "message" => "Account not paid for",
 
             ];
 
