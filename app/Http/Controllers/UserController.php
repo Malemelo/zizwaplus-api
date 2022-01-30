@@ -16,6 +16,31 @@ use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
+
+    public function suspend()
+    {
+        $auth = Auth::user();
+        $selected_user = StrictSession::where('user_id', $auth->id)->first();
+        $delete_user = $selected_user->delete();
+
+        $logout_response = [
+            "success" => false,
+            "message" => "Logged out successfully"
+        ];
+        $logout_status = 200;
+        return response()->json($logout_response, $logout_status);
+    }
+
+    public function happening()
+    {
+        $logout_response = [
+            "success" => false,
+            "message" => "Logged out successfully"
+        ];
+        $logout_status = 200;
+        return response()->json($logout_response, $logout_status);
+    }
+
     public function generate_code()
     {
         $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -449,17 +474,5 @@ class UserController extends Controller
         }
     }
 
-    public function suspend()
-    {
-        $auth = Auth::user();
-        $selected_user = StrictSession::where('user_id', $auth->id)->first();
-        $delete_user = $selected_user->delete();
 
-        $logout_response = [
-            "success" => false,
-            "message" => "Logged out successfully"
-        ];
-        $logout_status = 200;
-        return response()->json($logout_response, $logout_status);
-    }
 }
