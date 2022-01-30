@@ -22,10 +22,9 @@ class UserController extends Controller
         $auth = Auth::user();
         $selected_user = StrictSession::where('user_id', $auth->id)->first();
         $delete_user = $selected_user->delete();
-        Auth::logout();
 
         $logout_response = [
-            "success" => false,
+            "success" => true,
             "message" => "Logged out successfully"
         ];
         $logout_status = 200;
