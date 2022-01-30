@@ -23,11 +23,11 @@ class PaymentsController extends Controller
         $amount = 0;
 
         if($request->plan == "monthly"){
-            $amount = 82.21;
+            $amount = 90.07;
         }
 
         if($request->plan == "yearly"){
-            $amount = 822.10;
+            $amount = 812.10;
         }
 
         $client_user = User::where('id', Auth::user()->id)->first();
@@ -225,12 +225,12 @@ class PaymentsController extends Controller
             $amount = 0;
 
             if($request->plan == "monthly"){
-                $amount = 82.21;
+                $amount = 90.07;
                 //$amount = 82;
             }
 
             if($request->plan == "yearly"){
-                $amount = 822.10;
+                $amount = 812.10;
                 // $amount = 822;
             }
 

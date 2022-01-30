@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Movie;
 use App\Models\Payments;
+use App\Models\StrictSession;
 use App\Models\Title;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -102,21 +103,44 @@ class UserController extends Controller
                     $auth = Auth::user();
                     $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
 
-                    $response = [
-                        "success" => "true",
-                        "message" => "Enjoy video streaming re-imagined",
-                        "id" => $auth->id,
-                        "unique_code" => $auth->unique_code,
-                        "name" => $auth->name,
-                        "email" => $auth->email,
-                        "phoneNumber" => $auth->phoneNumber,
-                        "profilePic" => $auth->profile_pic,
-                        "subscriptionPlan" => null,
-                        'stripe_customer_id' => $auth->stripe_customer_id,
-                        "token" => $token
-                    ];
-                    $status_code = 201;
-                    return response()->json($response, $status_code);
+                    $session_count = StrictSession::where('user_id', $auth->id)->count();
+
+                    if($session_count > 2)
+                    {
+                        //deny entry
+
+                        $response = [
+                            "success" => false,
+                            "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                        ];
+                        $status_code = 401;
+                        return response()->json($response, $status_code);
+                    }
+
+                    if($session_count <= 2)
+                    {
+                        $strict_session = StrictSession::create([
+                            'user_id' => $auth->id,
+                            'device_id' => $request->device_id
+                        ]);
+
+                        $response = [
+                            "success" => "true",
+                            "message" => "Enjoy video streaming re-imagined",
+                            "id" => $auth->id,
+                            "unique_code" => $auth->unique_code,
+                            "name" => $auth->name,
+                            "email" => $auth->email,
+                            "phoneNumber" => $auth->phoneNumber,
+                            "profilePic" => $auth->profile_pic,
+                            "subscriptionPlan" => null,
+                            'stripe_customer_id' => $auth->stripe_customer_id,
+                            "token" => $token
+                        ];
+                        $status_code = 201;
+                        return response()->json($response, $status_code);
+                    }
+
                 }
             }else{
                 $response = [
@@ -192,27 +216,52 @@ class UserController extends Controller
         {
             if(Auth::attempt(['phoneNumber' => $request->phoneNumber, 'password' => $request->password]))
             {
+
                 $auth = Auth::user();
                 $token = $auth->createToken('LaravelSanctumAuth')->plainTextToken;
 
-                $response = [
-                    "success" => "true",
-                    "message" => "Enjoy video streaming re-imagined",
-                    "id" => $auth->id,
-                    "unique_code" => $auth->unique_code,
-                    "name" => $auth->name,
-                    "email" => $auth->email,
-                    "phoneNumber" => $auth->phoneNumber,
-                    "profilePic" => $auth->profile_pic,
-                    "subscriptionPlan" => null,
-                    'stripe_customer_id' => $auth->stripe_customer_id,
-                    "token" => $token
-                ];
-                $status_code = 201;
-                $sendSMS = Http::withoutVerifying()
-                    ->post('https://bulksms.zamtel.co.zm/api/v2.1/action/send/api_key/1a06def69ef52e93d69337af7187becf/contacts/' .$registering_phoneNumber. '/senderId/Zizwaplus/message/Hi+' . $request->name . '%2C+welcome+to+Zizwaplus+your+amazing+video+on+demand+platform.+Subscribe+monthly+or+yearly+to+enjoy+our+premium+content.');
+                $session_count = StrictSession::where('user_id', $auth->id)->count();
 
-                return response()->json($response, $status_code);
+                if($session_count > 2)
+                {
+                    //deny entry
+
+                    $response = [
+                        "success" => false,
+                        "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                    ];
+                    $status_code = 401;
+                    return response()->json($response, $status_code);
+                }
+
+                if($session_count <= 2)
+                {
+                    $strict_session = StrictSession::create([
+                        'user_id' => $auth->id,
+                        'device_id' => $request->device_id
+                    ]);
+
+                    $response = [
+                        "success" => "true",
+                        "message" => "Enjoy video streaming re-imagined",
+                        "id" => $auth->id,
+                        "unique_code" => $auth->unique_code,
+                        "name" => $auth->name,
+                        "email" => $auth->email,
+                        "phoneNumber" => $auth->phoneNumber,
+                        "profilePic" => $auth->profile_pic,
+                        "subscriptionPlan" => null,
+                        'stripe_customer_id' => $auth->stripe_customer_id,
+                        "token" => $token
+                    ];
+                    $status_code = 201;
+                    $sendSMS = Http::withoutVerifying()
+                        ->post('https://bulksms.zamtel.co.zm/api/v2.1/action/send/api_key/1a06def69ef52e93d69337af7187becf/contacts/' .$registering_phoneNumber. '/senderId/Zizwaplus/message/Hi+' . $request->name . '%2C+welcome+to+Zizwaplus+your+amazing+video+on+demand+platform.+Subscribe+monthly+or+yearly+to+enjoy+our+premium+content.');
+
+                    return response()->json($response, $status_code);
+                }
+
+
             }
         }else{
             $response = [
@@ -251,21 +300,43 @@ class UserController extends Controller
                     }
                     $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
 
-                    $response = [
-                        "success" => "true",
-                        "message" => "Account created successfully",
-                        "id" => $user->id,
-                        "unique_code" => $user->unique_code,
-                        "name" => $user->name,
-                        "email" => $user->email,
-                        "phoneNumber" => $user->phoneNumber,
-                        "profilePic" => $user->profile_pic,
-                        "subscriptionPlan" => $subscription_end,
-                        'stripe_customer_id' => $user->stripe_customer_id,
-                        "token" => $token
-                    ];
-                    $status_code = 201;
-                    return response()->json($response, $status_code);
+                    $session_count = StrictSession::where('user_id', $user->id)->count();
+
+                    if($session_count > 2)
+                    {
+                        //deny entry
+
+                        $response = [
+                            "success" => false,
+                            "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                        ];
+                        $status_code = 401;
+                        return response()->json($response, $status_code);
+                    }
+
+                    if($session_count <= 2)
+                    {
+                        $strict_session = StrictSession::create([
+                            'user_id' => $user->id,
+                            'device_id' => $request->device_id
+                        ]);
+
+                        $response = [
+                            "success" => "true",
+                            "message" => "Enjoy video streaming re-imagined",
+                            "id" => $user->id,
+                            "unique_code" => $user->unique_code,
+                            "name" => $user->name,
+                            "email" => $user->email,
+                            "phoneNumber" => $user->phoneNumber,
+                            "profilePic" => $user->profile_pic,
+                            "subscriptionPlan" => null,
+                            'stripe_customer_id' => $user->stripe_customer_id,
+                            "token" => $token
+                        ];
+                        $status_code = 201;
+                        return response()->json($response, $status_code);
+                    }
 
                 } elseif ($registered_but_suspended_user) {
                     $response = [
@@ -310,21 +381,43 @@ class UserController extends Controller
                 $activated_user = User::where('email', $request->email)->where('isActive', 1)->where('accountDeleted', 0)->first();
                 if ($activated_user) {
                     $token = $user->createToken('LaravelSanctumAuth')->plainTextToken;
-                    $response = [
-                        'success' => true,
-                        'message' => 'Welcome back',
-                        'user_id' => $user->id,
-                        'unique_code' => $user->unique_code,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'phoneNumber' => $user->phoneNumber,
-                        'profilePic' => $user->profile_pic,
-                        'subscription_end' => $subscription_plan,
-                        'stripe_customer_id' => $user->stripe_customer_id,
-                        'token' => $token,
-                    ];
-                    $status_code = 200;
-                    return response()->json($response, $status_code);
+                    $session_count = StrictSession::where('user_id', $user->id)->count();
+
+                    if($session_count > 2)
+                    {
+                        //deny entry
+
+                        $response = [
+                            "success" => false,
+                            "message" => "Your account is already in use on two other devices. Kindly logout on one of the devices and try again."
+                        ];
+                        $status_code = 401;
+                        return response()->json($response, $status_code);
+                    }
+
+                    if($session_count <= 2)
+                    {
+                        $strict_session = StrictSession::create([
+                            'user_id' => $user->id,
+                            'device_id' => $request->device_id
+                        ]);
+
+                        $response = [
+                            "success" => "true",
+                            "message" => "Enjoy video streaming re-imagined",
+                            "id" => $user->id,
+                            "unique_code" => $user->unique_code,
+                            "name" => $user->name,
+                            "email" => $user->email,
+                            "phoneNumber" => $user->phoneNumber,
+                            "profilePic" => $user->profile_pic,
+                            "subscriptionPlan" => null,
+                            'stripe_customer_id' => $user->stripe_customer_id,
+                            "token" => $token
+                        ];
+                        $status_code = 201;
+                        return response()->json($response, $status_code);
+                    }
 
                 } elseif ($registered_but_suspended_user) {
                     $response = [

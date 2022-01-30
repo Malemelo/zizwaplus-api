@@ -31,7 +31,8 @@ class User extends Authenticatable
         'optFourDigitCode',
         'stripe_customer_id',
         'stripe_id',
-        'unique_code'
+        'unique_code',
+        'device_id'
     ];
 
     public function payments()
