@@ -332,31 +332,12 @@ class PaymentsController extends Controller
         $subscription = Payments::where('user_id', Auth::user()->id)->whereDate('end_date', '>=' , $today)->orderBy('updated_at', 'desc')->first();
 
         if($subscription){
-            $auth = Auth::user();
-            $session_count = StrictSession::where('user_id', $auth->id)->get()->count();
-
-            if($session_count >= 3)
-            {
-                //deny entry
-                $deny_response = [
-                    "success" => false,
-                    "message" => "Your account is already in use on three other devices. Kindly logout on one of the devices and try again."
-                ];
-                $status_code = 400;
-                return response()->json($deny_response, $status_code);
-            }
-
-            if($session_count <= 2)
-            {
                 $end_date = Payments::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->first()->end_date;
                 $sub_response = [
                     "success" => true,
                     "message" => "Account active",
-                    "end_date" => $end_date
-
                 ];
                 return response()->json($sub_response, 200);
-            }
 
 
         }
