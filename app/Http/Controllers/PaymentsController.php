@@ -344,13 +344,117 @@ class PaymentsController extends Controller
 
         if(!$subscription){
 
-            $sub_response = [
-                "success" => false,
-                "message" => "Account not paid for",
+            $reference = MtnPaymentIntent::where('id', Auth::user()->id)->where('status', 0)->orderBy('created_at', 'desc')->first();
+            //$reference = "efa46c0a-8053-475c-ac9c-e8b2dd70635c";
 
-            ];
+            if($reference){
+                $request_url = "https://proxy.momoapi.mtn.com/collection/v1_0/requesttopay/".$reference->reference_id;
 
-            return response()->json($sub_response, 400);
+                //generate auth token
+                $token_response = Http::withBasicAuth('5f098bf7-051d-411e-9da5-17d7bf9e6ae5', 'df31dbf6faf04fe4b003be6859448ea0')->withHeaders([
+                    'X-Target-Environment' => 'mtnzambia',
+                    'Ocp-Apim-Subscription-Key' => '2abcde1eed76408389592e1b181ba0be'
+                ])->post('https://proxy.momoapi.mtn.com/collection/token/');
+
+                $response = (string)$token_response->getBody();
+                $json = json_decode($response);
+                //save the token into a variable
+                $token = $json->access_token;
+
+                //get status code
+                $payment_response = Http::withToken($token)->withHeaders([
+                    'X-Target-Environment' => 'mtnzambia',
+                    'Ocp-Apim-Subscription-Key' => '2abcde1eed76408389592e1b181ba0be'
+                ])->get($request_url);
+
+                $status_state = $payment_response->status();
+                $status_json = $payment_response->json();
+
+                if($status_state == 200){
+                    $client_user = User::where('id', Auth::user()->id)->first();
+                    if($status_json['status'] == "SUCCESSFUL"){
+                        $month_end = Date('y:m:d', strtotime('+30 days'));
+                        $year_end = Date('y:m:d', strtotime('+365 days'));
+                        $check_intent = MtnPaymentIntent::where('user_id', session('LoggedUser'))->where('status', 0)->orderBy('created_at', 'desc')->first();
+
+                        if($check_intent){
+                            if ($check_intent->plan_name == "monthly") {
+                                $transaction = Payments::create([
+                                    'user_id' => $client_user->id,
+                                    'subtotal' => $check_intent->plan_amount,
+                                    'total' => $check_intent->plan_amount,
+                                    'plan_type' => "monthly",
+                                    'start_date' => Date('y:m:d'),
+                                    'end_date' => $month_end,
+                                    'payment_method' => 'mtn',
+                                    'mtn_reference_id' => $check_intent->reference_id
+                                ]);
+                                $transaction->save();
+
+                                $update_intent = MtnPaymentIntent::find($check_intent->id);
+                                $update_intent->status = 1;
+                                $update_intent->update();
+
+                                $success_response = [
+                                    "success" => true,
+                                    "message" => "Payment succeeded, enjoy"
+                                ];
+
+                                return response()->json($success_response, 200);
+                            }
+                            if ($check_intent->plan_name == "yearly") {
+                                $transaction = Payments::create([
+                                    'user_id' => $client_user->id,
+                                    'subtotal' => $check_intent->plan_amount,
+                                    'total' => $check_intent->plan_amount,
+                                    'plan_type' => "yearly",
+                                    'start_date' => Date('y:m:d'),
+                                    'end_date' => $year_end,
+                                    'payment_method' => 'mtn',
+                                    'mtn_reference_id' => $check_intent->reference_id
+                                ]);
+                                $transaction->save();
+
+                                $update_intent = MtnPaymentIntent::find($check_intent->id);
+                                $update_intent->status = 1;
+                                $update_intent->update();
+
+                                $success_response = [
+                                    "success" => true,
+                                    "message" => "Payment succeeded, enjoy"
+                                ];
+
+                                return response()->json($success_response, 200);
+                            }
+                        }
+
+                    }else{
+                        $error_response = [
+                            "success" => false,
+                            "message" => "Account not paid for"
+                        ];
+
+                        return response()->json($error_response, 400);
+                    }
+                }else{
+                    $sub_response = [
+                        "success" => false,
+                        "message" => "Account not paid for",
+                    ];
+
+                    return response()->json($sub_response, 400);
+                }
+            }else{
+                $error_response = [
+                    "success" => false,
+                    "message" => "Account not paid for"
+                ];
+
+                return response()->json($error_response, 400);
+            }
+
+
+
         }
     }
 }
