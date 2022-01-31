@@ -326,7 +326,7 @@ class PaymentsController extends Controller
         }
     }
 
-    public function userStatus(Request $request)
+    public function userStatus()
     {
         $today = today()->format('Y-m-d');
         $subscription = Payments::where('user_id', Auth::user()->id)->whereDate('end_date', '>=' , $today)->orderBy('updated_at', 'desc')->first();
@@ -338,8 +338,6 @@ class PaymentsController extends Controller
                     "message" => "Account active",
                 ];
                 return response()->json($sub_response, 200);
-
-
         }
 
         if(!$subscription){
@@ -453,7 +451,12 @@ class PaymentsController extends Controller
                 return response()->json($error_response, 400);
             }
 
+            $error_response = [
+                "success" => false,
+                "message" => "Account not paid for"
+            ];
 
+            return response()->json($error_response, 400);
 
         }
     }
