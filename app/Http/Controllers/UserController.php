@@ -41,6 +41,40 @@ class UserController extends Controller
         return response()->json($logout_response, $logout_status);
     }
 
+    public function get_code()
+    {
+        $logged_user = User::where('id', Auth::user()->id)->first();
+        $unique_code = $logged_user->unique_code;
+
+        $today = today()->format('Y-m-d');
+        $subscription_list = Payments::where('user_id', Auth::user()->id)->whereDate('end_date', '>=' , $today)->orderBy('updated_at', 'desc')->get();
+        $subscription = $subscription_list->first();
+
+        if($subscription){
+            $response = [
+                "success" => true,
+                "unique_code" => $unique_code
+            ];
+
+            $res_status = 200;
+            return response()->json($response, $res_status);
+        }
+
+        if(!$subscription){
+            $response = [
+                "success" => false,
+                "unique_code" => "_____"
+            ];
+
+            $res_status = 400;
+            return response()->json($response, $res_status);
+        }
+
+
+
+
+    }
+
     public function generate_code()
     {
         $chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";

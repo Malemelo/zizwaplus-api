@@ -329,7 +329,8 @@ class PaymentsController extends Controller
     public function userStatus()
     {
         $today = today()->format('Y-m-d');
-        $subscription = Payments::where('user_id', Auth::user()->id)->whereDate('end_date', '>=' , $today)->orderBy('updated_at', 'desc')->first();
+        $subscription_list = Payments::where('user_id', Auth::user()->id)->whereDate('end_date', '>=' , $today)->orderBy('updated_at', 'desc')->get();
+        $subscription = $subscription_list->first();
 
         if($subscription){
                 $end_date = Payments::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->first()->end_date;
